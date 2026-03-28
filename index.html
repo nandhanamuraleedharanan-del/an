@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nandhana Muraleedharan A N </title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+ 
+:root{
+  --red:#ff2233;
+  --blue:#0af;
+  --dark-blue:#001a33;
+  --bg:#000;
+  --surface:rgba(0,10,20,0.85);
+  --card:rgba(0,15,30,0.9);
+  --ink:#e0f0ff;
+  --muted:#6a9fbf;
+  --border-blue:rgba(0,170,255,0.3);
+  --border-red:rgba(255,34,51,0.3);
+  --glow-blue:0 0 18px rgba(0,170,255,0.6);
+  --glow-red:0 0 18px rgba(255,34,51,0.6);
+}
+ 
+html{scroll-behavior:smooth}
+ 
+body{
+  font-family:'Rajdhani',sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  overflow-x:hidden;
+  line-height:1.7;
+  cursor:crosshair;
+}
+ 
+#matrix-canvas{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:0.18;
+}
+ 
+.bg-overlay{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,34,51,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 50% at 80% 50%, rgba(0,170,255,0.1) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,5,15,0.6) 100%);
+}
+ 
+body::after{
+  content:'';
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.04) 2px,
+    rgba(0,0,0,0.04) 4px
+  );
+}
+ 
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem clamp(1rem,4vw,3.5rem);
+  background:rgba(0,0,0,0.75);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border-blue);
+}
+ 
+.nav-logo{
+  font-family:'Orbitron',monospace;
+  font-size:1rem;font-weight:800;
+  color:var(--blue);
+  text-decoration:none;
+  text-shadow:var(--glow-blue);
+  letter-spacing:0.1em;
+}
+.nav-logo span{color:var(--red);text-shadow:var(--glow-red)}
+ 
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{
+  text-decoration:none;color:var(--muted);
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.8rem;letter-spacing:0.12em;text-transform:uppercase;
+  transition:color 0.2s,text-shadow 0.2s;
+}
+.nav-links a:hover{color:var(--blue);text-shadow:var(--glow-blue)}
+ 
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
+.hamburger span{width:24px;height:2px;background:var(--blue);display:block;transition:0.3s}
+ 
+.hero{
+  position:relative;z-index:5;
+  min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  padding:8rem 2rem 5rem;
+  text-align:center;
+}
+ 
+.hero-inner{position:relative;max-width:860px}
+ 
+.hero-tag{
+  display:inline-block;
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.72rem;letter-spacing:0.22em;text-transform:uppercase;
+  color:var(--blue);border:1px solid var(--border-blue);
+  padding:0.35rem 1.1rem;border-radius:2px;
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.7s 0.1s ease both;
+  box-shadow:var(--glow-blue);
+}
+ 
+.hero h1{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2rem,6vw,5rem);
+  font-weight:900;line-height:1.08;
+  margin-bottom:0.6rem;
+  animation:fadeUp 0.7s 0.2s ease both;
+  letter-spacing:0.04em;
+}
+ 
+.name-blue{color:var(--blue);text-shadow:var(--glow-blue)}
+.name-red{color:var(--red);text-shadow:var(--glow-red)}
+ 
+.hero-sub{
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(0.75rem,2vw,1rem);
+  color:var(--muted);letter-spacing:0.15em;
+  margin-bottom:1.5rem;
+  animation:fadeUp 0.7s 0.3s ease both;
+}
+ 
+.typing-wrap{
+  font-family:'Share Tech Mono',monospace;
+  font-size:clamp(0.85rem,2.2vw,1.1rem);
+  color:var(--blue);
+  margin-bottom:2.5rem;
+  min-height:1.6em;
+  animation:fadeUp 0.7s 0.4s ease both;
+}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--blue);margin-left:2px;animation:blink 0.8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+ 
+.hero-btns{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeUp 0.7s 0.5s ease both;
+}
+ 
+.btn-primary{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  background:var(--red);color:#fff;
+  text-decoration:none;padding:0.8rem 2rem;
+  font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  border:none;cursor:pointer;
+  box-shadow:var(--glow-red);
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:background 0.2s,transform 0.2s,box-shadow 0.2s;
+}
+.btn-primary:hover{background:#ff4455;transform:translateY(-2px);box-shadow:0 0 30px rgba(255,34,51,0.8)}
+ 
+.btn-outline{
+  display:inline-flex;align-items:center;gap:0.5rem;
+  border:1px solid var(--blue);color:var(--blue);
+  text-decoration:none;padding:0.78rem 2rem;
+  font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:600;
+  letter-spacing:0.1em;text-transform:uppercase;
+  clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);
+  transition:background 0.2s,color 0.2s,transform 0.2s;
+}
+.btn-outline:hover{background:var(--blue);color:#000;transform:translateY(-2px)}
+ 
+section{position:relative;z-index:5;padding:clamp(3rem,6vw,6rem) clamp(1rem,4vw,3.5rem)}
+ 
+.section-eyebrow{
+  font-family:'Share Tech Mono',monospace;
+  font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;
+  color:var(--red);margin-bottom:0.4rem;display:block;
+}
+.section-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.6rem,3.5vw,2.5rem);
+  font-weight:800;color:var(--ink);
+  margin-bottom:2.5rem;
+  text-shadow:var(--glow-blue);
+}
+ 
+.neon-divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue),var(--red),transparent);
+  margin:0;
+  box-shadow:0 0 8px rgba(0,170,255,0.4);
+}
+ 
+.about-grid{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1.4fr;gap:4rem;align-items:start;
+}
+ 
+.about-photo-box{position:relative}
+ 
+.photo-frame{
+  position:relative;
+  border:1px solid var(--border-blue);
+  padding:6px;
+  background:var(--card);
+  box-shadow:var(--glow-blue);
+  aspect-ratio:3/4;
+  overflow:hidden;
+  transition:box-shadow 0.3s;
+}
+.photo-frame:hover{box-shadow:0 0 35px rgba(0,170,255,0.7)}
+.photo-frame img{
+  width:100%;height:100%;object-fit:cover;display:block;
+}
+ 
+.corner{position:absolute;width:14px;height:14px;border-color:var(--blue);border-style:solid;z-index:2;}
+.corner.tl{top:-2px;left:-2px;border-width:2px 0 0 2px}
+.corner.tr{top:-2px;right:-2px;border-width:2px 2px 0 0}
+.corner.bl{bottom:-2px;left:-2px;border-width:0 0 2px 2px}
+.corner.br{bottom:-2px;right:-2px;border-width:0 2px 2px 0}
+ 
+.about-text-block p{color:var(--muted);font-size:1rem;margin-bottom:1rem;line-height:1.8;}
+.about-text-block p strong{color:var(--blue)}
+ 
+.tech-stack{margin-top:1.5rem}
+.tech-label{font-family:'Share Tech Mono',monospace;font-size:0.68rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);margin-bottom:0.8rem;display:block;}
+.tech-tags{display:flex;flex-wrap:wrap;gap:0.5rem}
+.tech-tag{padding:0.3rem 0.85rem;border:1px solid var(--border-blue);font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--blue);letter-spacing:0.08em;transition:background 0.2s,color 0.2s,box-shadow 0.2s;}
+.tech-tag:hover{background:var(--blue);color:#000;box-shadow:var(--glow-blue)}
+ 
+.cert-section-inner{max-width:1200px;margin:0 auto}
+ 
+.cert-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));
+  gap:1.5rem;
+}
+ 
+.cert-card{background:var(--card);border:1px solid var(--border-blue);overflow:hidden;position:relative;transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;}
+.cert-card:hover{transform:translateY(-6px);box-shadow:var(--glow-blue);border-color:var(--blue);}
+.cert-card:nth-child(even):hover{box-shadow:var(--glow-red);border-color:var(--red);}
+ 
+.cert-number{
+  position:absolute;top:10px;right:12px;z-index:10;
+  font-family:'Orbitron',monospace;font-size:0.65rem;font-weight:800;
+  color:rgba(0,170,255,0.9);letter-spacing:0.1em;
+  background:rgba(0,0,0,0.6);padding:2px 7px;
+  border:1px solid rgba(0,170,255,0.3);
+}
+.cert-card:nth-child(even) .cert-number{color:rgba(255,34,51,0.9);border-color:rgba(255,34,51,0.3);}
+ 
+.cert-thumb{
+  aspect-ratio:16/9;
+  position:relative;overflow:hidden;
+  background:rgba(0,20,40,0.8);
+  border-bottom:1px solid var(--border-blue);
+}
+.cert-thumb img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transition:transform 0.4s ease;
+}
+.cert-card:hover .cert-thumb img{transform:scale(1.05);}
+ 
+.cert-body{padding:1rem 1.2rem 1.3rem}
+.cert-org{font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--red);margin-bottom:0.35rem;}
+.cert-card:nth-child(even) .cert-org{color:var(--blue)}
+.cert-title{font-family:'Orbitron',monospace;font-size:0.82rem;font-weight:600;color:var(--ink);line-height:1.3;margin-bottom:0.4rem;}
+.cert-date{font-family:'Share Tech Mono',monospace;font-size:0.68rem;color:var(--muted);margin-bottom:0.5rem;}
+.cert-desc{font-size:0.82rem;color:var(--muted);line-height:1.6}
+.cert-code{display:inline-block;margin-top:0.5rem;font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--blue);border:1px solid var(--border-blue);padding:0.15rem 0.5rem;}
+ 
+.contact-inner{max-width:660px;margin:0 auto}
+ 
+.contact-card{background:var(--card);border:1px solid var(--border-blue);padding:2.5rem;box-shadow:var(--glow-blue);position:relative;overflow:hidden;}
+.contact-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--red),var(--blue),var(--red));animation:scanLine 3s linear infinite;}
+@keyframes scanLine{0%{background-position:0% 0%}100%{background-position:200% 0%}}
+ 
+.contact-form{display:flex;flex-direction:column;gap:1rem;margin-top:1.5rem}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+ 
+.field label{display:block;font-family:'Share Tech Mono',monospace;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--blue);margin-bottom:0.4rem;}
+.field input,.field textarea{width:100%;background:rgba(0,170,255,0.04);border:1px solid var(--border-blue);padding:0.7rem 1rem;font-family:'Rajdhani',sans-serif;font-size:1rem;color:var(--ink);outline:none;resize:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.field input:focus,.field textarea:focus{border-color:var(--blue);box-shadow:var(--glow-blue);}
+.field input::placeholder,.field textarea::placeholder{color:rgba(106,159,191,0.5)}
+ 
+.submit-btn{align-self:flex-start;background:linear-gradient(90deg,var(--red),#c00);color:#fff;border:none;padding:0.85rem 2.5rem;font-family:'Orbitron',monospace;font-size:0.8rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;clip-path:polygon(8px 0%,100% 0%,calc(100% - 8px) 100%,0% 100%);box-shadow:var(--glow-red);transition:transform 0.2s,box-shadow 0.2s;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 0 30px rgba(255,34,51,0.8)}
+ 
+.contact-direct{margin-top:1.5rem;font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:var(--muted);}
+.contact-direct a{color:var(--blue);text-decoration:none;transition:color 0.2s}
+.contact-direct a:hover{color:var(--red);text-shadow:var(--glow-red)}
+ 
+.social-strip{display:flex;gap:1rem;margin-top:1.5rem;flex-wrap:wrap;}
+.social-btn{display:inline-flex;align-items:center;gap:0.5rem;border:1px solid var(--border-blue);padding:0.55rem 1.2rem;font-family:'Share Tech Mono',monospace;font-size:0.75rem;color:var(--blue);text-decoration:none;letter-spacing:0.08em;transition:background 0.2s,color 0.2s,box-shadow 0.2s;}
+.social-btn:hover{background:var(--blue);color:#000;box-shadow:var(--glow-blue)}
+.social-btn.ig{border-color:var(--border-red);color:var(--red)}
+.social-btn.ig:hover{background:var(--red);color:#fff;box-shadow:var(--glow-red)}
+ 
+.thankyou{text-align:center;padding:3rem 2rem;border-top:1px solid var(--border-blue);position:relative;z-index:5;}
+.thankyou-text{font-family:'Orbitron',monospace;font-size:clamp(1rem,2.5vw,1.6rem);font-weight:800;color:var(--blue);text-shadow:var(--glow-blue);letter-spacing:0.08em;}
+.thankyou-text span{color:var(--red);text-shadow:var(--glow-red)}
+.thankyou-sub{font-family:'Share Tech Mono',monospace;font-size:0.78rem;color:var(--muted);letter-spacing:0.15em;margin-top:0.5rem;}
+ 
+footer{position:relative;z-index:5;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1.5rem clamp(1rem,4vw,3.5rem);border-top:1px solid var(--border-blue);background:rgba(0,0,0,0.6);}
+.footer-brand{font-family:'Orbitron',monospace;font-size:0.82rem;font-weight:800;color:var(--blue);text-shadow:var(--glow-blue);}
+.footer-links{display:flex;gap:1.5rem;align-items:center}
+.footer-links a{color:var(--muted);text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:0.75rem;display:flex;align-items:center;gap:0.4rem;transition:color 0.2s;}
+.footer-links a:hover{color:var(--blue)}
+ 
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.65s ease,transform 0.65s ease;}
+.reveal.visible{opacity:1;transform:translateY(0)}
+ 
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+ 
+@media(max-width:768px){
+  .about-grid{grid-template-columns:1fr;gap:2.5rem}
+  .about-photo-box{max-width:260px;margin:0 auto}
+  .form-row{grid-template-columns:1fr}
+  .nav-links{display:none;flex-direction:column;gap:0;position:fixed;top:56px;left:0;right:0;background:rgba(0,0,0,0.97);border-bottom:1px solid var(--border-blue);padding:1rem 2rem 1.5rem;}
+  .nav-links.open{display:flex}
+  .nav-links a{padding:0.6rem 0;border-bottom:1px solid rgba(0,170,255,0.1);font-size:0.85rem}
+  .hamburger{display:flex}
+  .hero-btns{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+ 
+<canvas id="matrix-canvas"></canvas>
+<div class="bg-overlay"></div>
+ 
+<nav>
+  <a href="#" class="nav-logo">
+    <span style="color:var(--blue)">NANDHANA</span>
+    <span style="color:var(--red)">MURALEEDHARAN</span>
+    <span style="color:#e0f0ff">A N</span>
+  </a>
+  <ul class="nav-links" id="nav-menu">
+    <li><a href="#about">About</a></li>
+    <li><a href="#certificates">Certificates</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+ 
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div class="hero-tag">// BCA Student · Cybersecurity · AI</div>
+    <h1>
+      <span class="name-white">NANDHANA</span><br>
+    </h1>
+    <p class="hero-sub">KLE Society's Degree College, Bangalore &nbsp;|&nbsp; Kannur, Kerala</p>
+    <div class="typing-wrap"><span id="typed-text"></span><span class="cursor"></span></div>
+    <div class="hero-btns">
+      <a href="#about" class="btn-primary">Explore Profile</a>
+      <a href="#contact" class="btn-outline">Get In Touch</a>
+    </div>
+  </div>
+</section>
+ 
+<div class="neon-divider"></div>
+ 
+<!-- ═══════════════ ABOUT ═══════════════ -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-photo-box reveal">
+      <div class="photo-frame">
+        <div class="corner tl"></div><div class="corner tr"></div>
+        <div class="corner bl"></div><div class="corner br"></div>
+        <img src="profile.jpg" alt="Nandhana Muraleedharan A N"/>
+      </div>
+    </div>
+ 
+    <div class="about-text-block reveal">
+      <span class="section-eyebrow">// 01 — ABOUT ME</span>
+      <h2 class="section-title">Who I Am</h2>
+      <p>I am <strong>Nandhana Muraleedharan A N</strong>, currently a <strong>Bachelor of Computer Applications (BCA)</strong> student at <strong>KLE Society's Degree College, Bangalore</strong>, and I am originally from <strong>Kannur, Kerala</strong>.</p>
+      <p>I am passionate about building a career in <strong>cybersecurity</strong> and <strong>artificial intelligence</strong>. I have developed a strong foundation in programming and technology by learning languages and tools such as <strong>C++, Python, Java, SQL, HTML, Tally</strong>, and I also have some basic knowledge of <strong>N8N</strong>.</p>
+      <p>As a student, I am continuously working on improving my skills and gaining practical knowledge to achieve my career goals in the tech field. I am eager to learn, grow, and contribute to innovative and secure technology solutions in the future.</p>
+      <div class="tech-stack">
+        <span class="tech-label">// TECH STACK</span>
+        <div class="tech-tags">
+          <span class="tech-tag">C++</span>
+          <span class="tech-tag">Python</span>
+          <span class="tech-tag">Java</span>
+          <span class="tech-tag">SQL</span>
+          <span class="tech-tag">HTML</span>
+          <span class="tech-tag">Tally</span>
+          <span class="tech-tag">N8N</span>
+          <span class="tech-tag">Cybersecurity</span>
+          <span class="tech-tag">AI/ML</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="neon-divider"></div>
+ 
+<!-- ═══════════════ CERTIFICATES ═══════════════ -->
+<section id="certificates">
+  <div class="cert-section-inner">
+    <div class="reveal" style="text-align:center;margin-bottom:2rem">
+      <span class="section-eyebrow">// 02 — CREDENTIALS</span>
+      <h2 class="section-title">My Certificates</h2>
+    </div>
+    <div class="cert-grid">
+ 
+      <!-- 01 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">01</div>
+        <div class="cert-thumb">
+          <img src="cert1.jpg" alt="Tally Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">TALLY</div>
+          <div class="cert-title">Tally — Offline Course</div>
+          <div class="cert-date">2024 – 25</div>
+          <div class="cert-desc">Tally course conducted as part of Academic Activity for the year 2024–25. Achieved <strong style="color:var(--blue)">A+ grade</strong> in Tally.</div>
+        </div>
+      </div>
+ 
+      <!-- 02 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">02</div>
+        <div class="cert-thumb">
+          <img src="cert2.jpg" alt="Microsoft Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">MICROSOFT</div>
+          <div class="cert-title">Authentication and Authorization in Cybersecurity</div>
+          <div class="cert-date">28 September 2025</div>
+          <div class="cert-desc">Successfully completed Microsoft course — Describe authentication and authorization in cybersecurity.</div>
+        </div>
+      </div>
+ 
+      <!-- 03 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">03</div>
+        <div class="cert-thumb">
+          <img src="cert3.jpg" alt="SkillUp Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">SKILLUP</div>
+          <div class="cert-title">Introduction to Cyber Security</div>
+          <div class="cert-date">9th November 2025</div>
+          <div class="cert-desc">This professional has demonstrated initiative and a commitment to deepening their skills and advancing their career.</div>
+          <span class="cert-code">CODE: 9360366</span>
+        </div>
+      </div>
+ 
+      <!-- 04 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">04</div>
+        <div class="cert-thumb">
+          <img src="cert4.jpg" alt="Microsoft Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">MICROSOFT</div>
+          <div class="cert-title">Device-Based Threats and Security Controls</div>
+          <div class="cert-date">28 September 2025</div>
+          <div class="cert-desc">Successfully completed — Describe device-based threats and security controls.</div>
+        </div>
+      </div>
+ 
+      <!-- 05 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">05</div>
+        <div class="cert-thumb">
+          <img src="cert5.jpg" alt="MathWorks Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">MATHWORKS — TRAINING SERVICES</div>
+          <div class="cert-title">Machine Learning Onramp</div>
+          <div class="cert-date">21 October 2025</div>
+          <div class="cert-desc">Successfully completed 100% of the self-paced training course — Machine Learning Onramp.</div>
+        </div>
+      </div>
+ 
+      <!-- 06 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">06</div>
+        <div class="cert-thumb">
+          <img src="cert6.jpg" alt="Microsoft Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">MICROSOFT</div>
+          <div class="cert-title">Application-Based Threats and How to Protect Against Them</div>
+          <div class="cert-date">28 September 2025</div>
+          <div class="cert-desc">Successfully completed — Describe application-based threats and how to protect against them.</div>
+        </div>
+      </div>
+ 
+      <!-- 07 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">07</div>
+        <div class="cert-thumb">
+          <img src="cert7.jpg" alt="Celonis Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">CELONIS SL</div>
+          <div class="cert-title">Celonis Foundations</div>
+          <div class="cert-date">Nov 04, 2025</div>
+          <div class="cert-desc">Issued by Celonis SL. Completed the Celonis Foundations certification programme.</div>
+        </div>
+      </div>
+ 
+      <!-- 08 -->
+      <div class="cert-card reveal">
+        <div class="cert-number">08</div>
+        <div class="cert-thumb">
+          <img src="cert8.jpg" alt="Microsoft Certificate"/>
+        </div>
+        <div class="cert-body">
+          <div class="cert-org">MICROSOFT</div>
+          <div class="cert-title">Basic Cybersecurity Threats, Attacks and Mitigations</div>
+          <div class="cert-date">15 September 2025</div>
+          <div class="cert-desc">Earned the badge — Describe basic cybersecurity threats, attacks, and mitigations. Proud to celebrate this achievement!</div>
+        </div>
+      </div>
+ 
+    </div>
+  </div>
+</section>
+ 
+<div class="neon-divider"></div>
+ 
+<!-- ═══════════════ CONTACT ═══════════════ -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="reveal" style="margin-bottom:2rem">
+      <span class="section-eyebrow">// 03 — CONTACT</span>
+      <h2 class="section-title">Get In Touch</h2>
+      <p style="color:var(--muted);font-size:0.95rem;font-family:'Share Tech Mono',monospace">Have a message? Send it through the terminal below.</p>
+    </div>
+    <div class="contact-card reveal">
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="field">
+            <label for="fname">First Name</label>
+            <input type="text" id="fname" placeholder="Your first name" required/>
+          </div>
+          <div class="field">
+            <label for="lname">Last Name</label>
+            <input type="text" id="lname" placeholder="Your last name"/>
+          </div>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="your@email.com" required/>
+        </div>
+        <div class="field">
+          <label for="message">Message</label>
+          <textarea id="message" rows="5" placeholder="> Write your message here..." required></textarea>
+        </div>
+        <button class="submit-btn" type="submit">TRANSMIT MESSAGE</button>
+      </form>
+      <p class="contact-direct">
+        Or reach me directly →
+        <a href="mailto:nandhanamuraleedharan.an@gmail.com">nandhanamuraleedharan.an@gmail.com</a>
+      </p>
+      <div class="social-strip">
+        <a href="https://www.linkedin.com/in/nandhana-muraleedharan-a-n-304102388" target="_blank" rel="noopener" class="social-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://www.instagram.com/_nan_dhuu_" target="_blank" rel="noopener" class="social-btn ig">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+          Instagram
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<div class="thankyou">
+  <p class="thankyou-text">THANK YOU FOR CHECKING MY <span>WEBSITE</span> ❤️</p>
+  <p class="thankyou-sub">// your visit means a lot — nandhana muraleedharan a n</p>
+</div>
+ 
+<footer>
+  <span class="footer-brand">NANDHANA_AN</span>
+  <span style="font-family:'Share Tech Mono',monospace;font-size:0.7rem;color:var(--muted)">© 2025</span>
+  <div class="footer-links">
+    <a href="https://www.linkedin.com/in/nandhana-muraleedharan-a-n-304102388" target="_blank" rel="noopener">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </a>
+    <a href="https://www.instagram.com/_nan_dhuu_" target="_blank" rel="noopener" style="color:var(--red)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
+      Instagram
+    </a>
+  </div>
+</footer>
+ 
+<script>
+/* ── MATRIX RAIN ── */
+(function(){
+  const canvas = document.getElementById('matrix-canvas');
+  const ctx = canvas.getContext('2d');
+  let cols, drops;
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ01ABCDEFGHIJKLMNOP>_{}[]</>01';
+  const palette = ['#0af','#ff2233','#001aff','#fff','#00ff88'];
+  function resize(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    cols = Math.floor(canvas.width / 18);
+    drops = Array(cols).fill(1).map(()=> Math.random()*-canvas.height/18);
+  }
+  function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.04)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.font='14px Share Tech Mono,monospace';
+    for(let i=0;i<cols;i++){
+      const c=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillStyle=palette[Math.floor(Math.random()*palette.length)];
+      ctx.fillText(c, i*18, drops[i]*18);
+      if(drops[i]*18 > canvas.height && Math.random()>0.975) drops[i]=0;
+      drops[i]+=0.5;
+    }
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  setInterval(draw,40);
+})();
+ 
+/* ── TYPING EFFECT ── */
+const phrases = [
+  'Cybersecurity Enthusiast',
+  'AI / ML Explorer',
+  'BCA Student @ KLE Bangalore',
+  'Python | Java | C++ Developer',
+  'Future Tech Innovator'
+];
+let pi=0, ci=0, deleting=false;
+function type(){
+  const el=document.getElementById('typed-text');
+  const phrase=phrases[pi];
+  if(!deleting){
+    el.textContent=phrase.slice(0,++ci);
+    if(ci===phrase.length){deleting=true;setTimeout(type,1600);return}
+  } else {
+    el.textContent=phrase.slice(0,--ci);
+    if(ci===0){deleting=false;pi=(pi+1)%phrases.length}
+  }
+  setTimeout(type,deleting?45:80);
+}
+type();
+ 
+/* ── MOBILE MENU ── */
+function toggleMenu(){
+  document.getElementById('nav-menu').classList.toggle('open');
+}
+ 
+/* ── SCROLL REVEAL ── */
+const reveals=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('visible'),i*80);
+      obs.unobserve(e.target);
+    }
+  });
+},{threshold:0.1});
+reveals.forEach(el=>obs.observe(el));
+ 
+/* ── CONTACT FORM ── */
+function handleSubmit(e){
+  e.preventDefault();
+  const btn=e.target.querySelector('.submit-btn');
+  btn.textContent='[ MESSAGE SENT ✓ ]';
+  btn.style.background='linear-gradient(90deg,#0a5,#083)';
+  setTimeout(()=>{btn.textContent='TRANSMIT MESSAGE';btn.style.background='';e.target.reset();},3000);
+}
+</script>
+</body>
+</html>
+ 
