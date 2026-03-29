@@ -69,7 +69,7 @@ portfolio/
 
 ⚙️ Deployment
 
-This website is deployed using Netlify.
+This website is deployed using GitHub & Netlify.
 
 ---
 
